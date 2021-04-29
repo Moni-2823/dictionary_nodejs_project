@@ -1,15 +1,17 @@
-const mongoose = require('mongoose');
-const Schema = require('mongoose');
+// const mongoose = require('mongoose');
+const {Schema, model} = require('mongoose');
 
 var dictionarySchema = new Schema({
-    name: {
-        type: String
+    word: {
+        type: String,
+        required: true
     },
-    means: {
-        type: String
+    meaning: {
+        type: String,
+        required: true
     }
 });
 
-const dictionary = mongoose.model('dictionary', dictionarySchema);
+const dictionary = model('dictionary', dictionarySchema);
 
 module.exports = {dictionary};
