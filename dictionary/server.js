@@ -7,6 +7,7 @@ const {mongoose} = require('./../database/server');
 const {dictionary} = require('./../models/model');
 var options = require('../cors/corsSexeption')
 
+var port = process.env.PORT || 3000;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
@@ -83,6 +84,6 @@ function serchingWordInDb(searchWord) {
     })
 }
 
-app.listen(3000, () => {
-    console.log('server is upon port 3000');
+app.listen(port, () => {
+    console.log('server is upon port', port);
 });
