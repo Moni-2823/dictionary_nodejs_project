@@ -25,7 +25,7 @@ app.post('/createDictionaryPage',(req, res) => {
         // res.send({msg: 'problem in Database'});
         secondaryApiPromice(req.body.word).then(data => {
             if(data) {
-                res.status(200).send({'data:':data});
+                res.status(200).send({'data':data});
                 var dataStructureForDb = {
                     "word" : req.body.word,
                     "meaning" : ''
