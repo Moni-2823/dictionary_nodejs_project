@@ -5,11 +5,12 @@ const cors = require('cors')
 
 const {mongoose} = require('./../database/server');
 const {dictionary} = require('./../models/model');
+var options = require('../cors/corsSexeption')
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
-app.use(cors());
+app.use(cors(options));
 
 //API point or end point or route
 app.post('/createDictionaryPage',(req, res) => {
