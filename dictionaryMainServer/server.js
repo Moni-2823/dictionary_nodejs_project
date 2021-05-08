@@ -4,9 +4,10 @@ const cors = require('cors');
 const { savingDataToDatabase } = require('./addOnFunctions/savingDataToDb');
 const { secondaryApiPromice } = require('./addOnFunctions/hitGoogleDictionaryApi');
 const { serchingWordInDb } = require('./addOnFunctions/findDataFromDatabase');
+var mongoose = require('./../database/server')
 
 
-var options = require('../cors/corsSexeption');
+var options = require('../cors/corsExeption');
 
 var port = process.env.PORT || 3000;
 var app = express();
@@ -40,6 +41,15 @@ app.post('/createDictionaryPage',(req, res) => {
             res.send({msg: 'error found',error: err});
         })
     })
+})
+
+app.post('/askUserForMeaning',(req, res) => {
+    console.log(req.body)
+    var saveStatus = savingDataToDatabase(req.body)
+    if (saveStatus) {
+        return res.status(200).send({msg: 'thanks for your contribution'});
+    }
+    res.status(400).send({msg: 'unable to save your meaning in dictionary, please try again'})
 })
 
 
