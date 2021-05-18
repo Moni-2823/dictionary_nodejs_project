@@ -9,6 +9,12 @@ var dictionarySchema = new Schema({
     meaning: {
         type: String,
         required: true
+    },
+    rating: {
+        type: Number,
+        max: 10,
+        min: 0,
+        default: 10
     }
 });
 
