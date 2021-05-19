@@ -9,6 +9,7 @@ var mongoose = require('./../database/server')
 var { createJwt } = require('./addOnFunctions/jwt')
 var {verifyAuth} = require('./addOnFunctions/middleWareToCheckAuth')
 var { hashing,comparingHashPassword } = require('./addOnFunctions/hashing')
+var { undefinedWordModel } = require('./../database/models/undefinedWordsModel')
 
 var options = require('./../cors/corsExeption');
 const { dictionary } = require('../database/models/dictionaryModel');
@@ -61,7 +62,7 @@ app.post('/userSignUp',(req, res) => {
             console.log('signup details saved successfully',details)
             return res.status(200).send({msg:'details saved', details})
         }).catch((err) => {
-            res.status(400).send({msg:'facing to save details'});
+            res.status(400).send({msg:'facing to save details', err});
         })
     })
 })
@@ -88,6 +89,16 @@ app.post('/logInToUser',(req, res) => {
     })
 })
 
+
+//api route to fill undefind words
+app.get('/toFetchUndefindWords',(req ,res) => {
+    undefinedWordModel.find().then((result) => {
+        res.status(200).send({msg: 'undefind words are::',result});
+    }).catch(e => {
+        res.status(404).send({msg: 'not found'});
+    })
+})
+
 //check login token res.login first
 app.use(verifyAuth)
 
@@ -105,13 +116,32 @@ app.post('/askUserForMeaning',(req, res) => {
 app.post('/mentainRating',(req, res) => {
     dictionary.findOne({word: req.body.word}).then((doc) => {
         var ratingValueToUpdate = null; 
-
+// if 10  || {0 = meaning f1&delete and undefinded.save()}
         if (req.body.like) {
-            ratingValueToUpdate = {rating: doc.rating + 1}
+            if (doc.rating < 10) {
+                ratingValueToUpdate = {rating: doc.rating + 1}
+            }
         } else {
-            ratingValueToUpdate = {rating: doc.rating - 1}
+            if(doc.rating > 0) {
+                ratingValueToUpdate = {rating: doc.rating - 1}
+            }
         }
-        dictionary.findOneAndUpdate({word: doc.word}, { $set: ratingValueToUpdate }).then((result) => {
+        if(doc.rating <= 0) {
+            var savingToUndefindWord = new undefinedWordModel({"word": doc.word})
+            savingToUndefindWord.save().then((res) => {
+                console.log('word saved to undefind collection')
+            }).catch(err => {
+                console.log('error occer',err);
+                    })
+            return dictionary.findOneAndRemove({word: req.body.word}).then((output) => {
+               console.log('undefined word is deleted'); 
+                res.status(200).send({msg: 'rating updated'});
+            }).catch(err => {
+                console.log('error occer',err);
+                res.status(400).send({msg: 'not deleted'});
+            })
+        }
+        dictionary.findOneAndUpdate({word: doc.word}, { $set: ratingValueToUpdate },{new: true}).then((result) => {
             console.log(result)
             res.status(200).send({msg: 'rating updated'});
         }).catch(e => {
