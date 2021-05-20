@@ -153,6 +153,20 @@ app.post('/mentainRating',(req, res) => {
     })
 })
 
+app.post('/savingUndefindWords',(req, res) => {
+    savingDataToDatabase(req.body).then((doc) => {
+        console.log('data saved to db');
+        undefinedWordModel.findOneAndRemove({"word": doc.word}).then((document) => {
+            console.log('word details deleted ');
+            res.status(200).send({msg: 'data saved sucessfully'});
+        }).catch(e => {
+            res.status(400).send({msg: " error occur"});
+        })
+    }).catch(e => {
+        res.status(400).send({msg: 'something wrong'});
+    })
+})
+
 
 app.listen(port, () => {
     console.log('server is upon port', port);
