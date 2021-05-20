@@ -1,4 +1,4 @@
-var whitelist = ['http://localhost:8000', 'http://localhost:8080']; //white list consumers
+var whitelist = ['http://localhost:8000', 'http://localhost:8080', 'https://shabdkosh-vue.herokuapp.com/#/']; //white list consumers
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
